@@ -1,0 +1,50 @@
+
+<!DOCTYPE html>
+<html lang="zh-tw">
+<head>
+	<meta charset="utf-8">
+	<title>test</title>
+	<script src='https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.9.0/sql-wasm.min.js'></script>
+	<script>
+	let config = {
+		locateFile: filename => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.9.0/sql-wasm.wasm`
+	};
+	initSqlJs(config).then(function(SQL){
+		const xhr = new XMLHttpRequest();
+
+		xhr.open('GET', 'cs/townsnote.db', true);
+		xhr.responseType = 'arraybuffer';
+
+		xhr.onload = e => {
+			const uInt8Array = new Uint8Array(xhr.response);
+			const db = new SQL.Database(uInt8Array);
+
+			window.sqlitedb = db;
+
+			// const contents = db.exec("SELECT * FROM towns");
+			// contents is now [{columns:['col1','col2',...], values:[[first row], [second row], ...]}]
+			// console.log("contents=",contents);
+		};
+		xhr.send();
+	});
+
+	function get_town_by_id() {
+		if(!window.sqlitedb) return;
+		let id = document.getElementById('id').value;
+		let contents = window.sqlitedb.exec("SELECT * FROM towns where id="+id);
+		console.log("contents=", contents);
+
+		var jsonArray = JSON.parse(JSON.stringify(contents))
+		console.log("jsonArray=", jsonArray);
+		document.getElementById('result').value = JSON.stringify(contents);
+	};
+	</script>
+
+</head>
+<body>
+	<input type="text" value="9007010" id="id"></input>
+	<button onclick="get_town_by_id();">query</button>
+	<br/><br/>
+	<textarea id="result" rows="20" cols="50"></textarea>
+</body>
+</html>
