@@ -6,27 +6,40 @@
 	<title>test</title>
 	<script src='https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.9.0/sql-wasm.min.js'></script>
 	<script>
-	let config = {
-		locateFile: filename => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.9.0/sql-wasm.wasm`
-	};
-	initSqlJs(config).then(function(SQL){
-		const xhr = new XMLHttpRequest();
+	// let config = {
+	// 	locateFile: filename => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.9.0/sql-wasm.wasm`
+	// };
+	// initSqlJs(config).then(function(SQL){
+	// 	const xhr = new XMLHttpRequest();
 
-		xhr.open('GET', 'csv/townsnote.db', true);
-		xhr.responseType = 'arraybuffer';
+	// 	xhr.open('GET', 'csv/townsnote.db', true);
+	// 	xhr.responseType = 'arraybuffer';
 
-		xhr.onload = e => {
-			const uInt8Array = new Uint8Array(xhr.response);
-			const db = new SQL.Database(uInt8Array);
+	// 	xhr.onload = e => {
+	// 		const uInt8Array = new Uint8Array(xhr.response);
+	// 		const db = new SQL.Database(uInt8Array);
 
-			window.sqlitedb = db;
+	// 		window.sqlitedb = db;
 
-			// const contents = db.exec("SELECT * FROM towns");
-			// contents is now [{columns:['col1','col2',...], values:[[first row], [second row], ...]}]
-			// console.log("contents=",contents);
+	// 		// const contents = db.exec("SELECT * FROM towns");
+	// 		// contents is now [{columns:['col1','col2',...], values:[[first row], [second row], ...]}]
+	// 		// console.log("contents=",contents);
+	// 	};
+	// 	xhr.send();
+	// });
+
+	async function initdb() {
+		let config = {
+			locateFile: filename => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.9.0/sql-wasm.wasm`
 		};
-		xhr.send();
-	});
+		const sqlPromise = initSqlJs(config);
+		const dataPromise = fetch("csv/townsnote.db").then(res => res.arrayBuffer());
+		const [SQL, buf] = await Promise.all([sqlPromise, dataPromise])
+		const sqlitedb = new SQL.Database(new Uint8Array(buf));
+		window.sqlitedb = sqlitedb;
+	};
+
+	initdb();
 
 	function get_town_by_id() {
 		if(!window.sqlitedb) return;

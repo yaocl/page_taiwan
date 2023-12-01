@@ -3,7 +3,7 @@ html, body {
 	padding: 0;
 }
 
-.tooltip {
+.maptooltip {
 	position: absolute;
 	display: none;
 	border: 1px solid grey;
@@ -16,7 +16,7 @@ html, body {
 	pointer-events: none;
 }
 
-.tooltip.s-show {
+.maptooltip.s-show {
 	display: block;
 	cursor: pointer;
 }
@@ -24,6 +24,7 @@ html, body {
 svg {
 	margin: 0;
 	background: #a4bac7;
+	z-index: -1;
 }
 
 path {

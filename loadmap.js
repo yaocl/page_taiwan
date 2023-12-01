@@ -2,8 +2,8 @@
 (function() {
 	'use strict';
 
-	var width = 800,
-		height = 600,
+	var width = 600,
+		height = 500,
 		svg = d3.select('#js-map'),
 		tooltip = d3.select('#js-tooltip'),
 		load,
@@ -89,6 +89,18 @@
 							.style('left', centroid[0] + 'px')
 							.style('top', (centroid[1] - 20) + 'px')
 							.text(d.properties.name);
+
+						var id = d.properties.id;
+						var town = get_town_by_id(id);
+						if( JSON.stringify(town) !== '{}' ) {
+							document.getElementById("city").innerHTML = town.cityid+" "+ town.city;
+							document.getElementById("town").innerHTML = town.id+" "+town.town;
+							document.getElementById("note").innerHTML = town.note;
+						} else {
+							document.getElementById("city").innerHTML = "";
+							document.getElementById("town").innerHTML = "";
+							document.getElementById("note").innerHTML = "";
+						}
 					})
 
 				})
